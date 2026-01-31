@@ -3,38 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hot Bucket Biryani | Order Online</title>
+    <title>Hot Bucket Biryani | Powered by ViNi Solutions</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         /* --- CORE STYLES --- */
-        body { font-family: 'Poppins', sans-serif; background-color: #2A0A0A; color: white; scroll-behavior: smooth; }
+        body { font-family: 'Poppins', sans-serif; background-color: #1a0505; color: white; scroll-behavior: smooth; }
         .serif { font-family: 'Playfair Display', serif; }
         
         /* --- LUXURY THEME --- */
         .gold-gradient { background: linear-gradient(135deg, #FDE68A 0%, #EAB308 50%, #CA8A04 100%); }
         .text-gold { background: linear-gradient(135deg, #FDE68A 0%, #EAB308 50%, #CA8A04 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
         .glass-panel { background: rgba(20, 5, 5, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(234, 179, 8, 0.2); }
         
         /* --- ANIMATIONS --- */
         @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        @keyframes slideUp { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         .animate-pop { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-slide { animation: slideUp 0.5s ease-out; }
         
         /* --- UI ELEMENTS --- */
         .cart-sidebar { transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .cart-sidebar.open { transform: translateX(0); }
-        .category-btn.active { background: linear-gradient(135deg, #FDE68A 0%, #EAB308 100%); color: #2A0A0A; font-weight: 700; transform: scale(1.05); box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3); }
         
-        /* Hide scrollbar for category list */
+        .category-btn.active { 
+            background: linear-gradient(135deg, #FDE68A 0%, #EAB308 100%); 
+            color: #1a0505; 
+            font-weight: 700; 
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.4); 
+        }
+        
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body class="overflow-x-hidden flex flex-col min-h-screen">
 
+    <!-- OFFER POPUP BANNER -->
     <div id="offer-modal" class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm hidden">
         <div class="glass-panel w-full max-w-md rounded-2xl overflow-hidden relative animate-pop shadow-2xl shadow-yellow-500/20">
             <button onclick="closeOffer()" class="absolute top-3 right-3 text-white/60 hover:text-white bg-black/50 rounded-full p-1 z-20">✕</button>
@@ -43,7 +49,7 @@
                 <img src="https://images.unsplash.com/photo-1633945274405-b6c8069047b0?auto=format&fit=crop&w=800" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
                 <div class="absolute bottom-4 left-4">
-                    <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">Limited Time</span>
+                    <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider animate-pulse">Limited Time Deal</span>
                 </div>
             </div>
             
@@ -60,83 +66,138 @@
                         <span class="line-through text-gray-500 text-sm">₹200</span>
                     </div>
                     <div class="mt-2 inline-flex items-center gap-1 bg-green-900/50 text-green-400 px-3 py-1 rounded-full text-xs border border-green-500/30">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                        Free Home Delivery (< 4km)
+                        ✓ Free Home Delivery (< 4km)
                     </div>
                 </div>
 
                 <button onclick="addOfferItem()" class="w-full gold-gradient text-black font-bold py-4 rounded-xl hover:scale-105 transition shadow-lg shadow-yellow-500/20 flex items-center justify-center gap-2">
-                    ADD TO BUCKET <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                    ADD TO BUCKET
                 </button>
             </div>
         </div>
     </div>
 
-    <nav class="fixed w-full z-50 glass bg-[#2A0A0A]/90 py-4 px-4 md:px-8 flex justify-between items-center shadow-2xl">
+    <!-- EVENT BOOKING MODAL -->
+    <div id="event-modal" class="fixed inset-0 z-[90] bg-black/95 flex items-center justify-center p-4 backdrop-blur-md hidden">
+        <div class="bg-[#2A0A0A] border border-yellow-500/30 w-full max-w-2xl rounded-2xl overflow-hidden relative animate-slide shadow-2xl">
+            <button onclick="toggleEventModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white z-20">✕</button>
+            
+            <div class="flex flex-col md:flex-row h-full">
+                <div class="w-full md:w-1/3 bg-[url('https://images.unsplash.com/photo-1519225468063-50126b84f617?auto=format&fit=crop&w=800')] bg-cover bg-center relative">
+                    <div class="absolute inset-0 bg-yellow-900/40 mix-blend-multiply"></div>
+                    <div class="absolute bottom-4 left-4 text-white">
+                        <h3 class="font-bold text-xl serif">Grand Events</h3>
+                        <p class="text-xs text-yellow-200">Weddings • Parties • Corporate</p>
+                    </div>
+                </div>
+                
+                <div class="w-full md:w-2/3 p-8">
+                    <h2 class="text-2xl font-bold text-yellow-500 mb-1">Book Your Event</h2>
+                    <p class="text-gray-400 text-sm mb-6">Tell us about your requirement. We'll handle the feast.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1 uppercase tracking-wider">Event Type</label>
+                            <select id="event-type" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-yellow-500 outline-none">
+                                <option>Wedding</option>
+                                <option>Birthday Party</option>
+                                <option>Corporate Lunch</option>
+                                <option>Family Gathering</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1 uppercase tracking-wider">Guest Count</label>
+                                <input type="number" id="guest-count" placeholder="Ex: 50" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-yellow-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1 uppercase tracking-wider">Date</label>
+                                <input type="date" id="event-date" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-yellow-500 outline-none">
+                            </div>
+                        </div>
+                        <button onclick="submitEventInquiry()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl mt-2 flex items-center justify-center gap-2 transition">
+                            Send Inquiry on WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 glass bg-[#1a0505]/90 py-4 px-4 md:px-8 flex justify-between items-center shadow-2xl">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 gold-gradient rounded-full flex items-center justify-center text-[#2A0A0A] shadow-lg font-bold text-lg animate-float">HB</div>
+            <div class="w-10 h-10 gold-gradient rounded-full flex items-center justify-center text-[#1a0505] shadow-lg font-bold text-lg">HB</div>
             <div>
-                <h1 class="text-lg md:text-xl font-bold tracking-tight leading-none">HOT BUCKET</h1>
+                <h1 class="text-lg md:text-xl font-bold tracking-tight leading-none text-white">HOT BUCKET</h1>
                 <p class="text-[10px] text-yellow-500 tracking-widest uppercase">Biryani</p>
             </div>
         </div>
         <div class="flex items-center gap-4">
+            <button onclick="toggleEventModal()" class="hidden md:block text-sm font-semibold text-yellow-500 hover:text-white transition border border-yellow-500/50 px-4 py-1.5 rounded-full hover:bg-yellow-500/10">
+                Book Events
+            </button>
             <button onclick="toggleCart()" class="relative p-2 hover:bg-white/10 rounded-full transition">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                <span id="cart-count" class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#2A0A0A]">0</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <span id="cart-count" class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#1a0505]">0</span>
             </button>
         </div>
     </nav>
 
-    <section class="relative pt-32 pb-20 px-4 text-center overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-full z-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-        
-        <div class="relative z-10 max-w-4xl mx-auto space-y-4">
-            <div class="inline-block border border-yellow-500/50 rounded-full px-4 py-1 bg-black/30 backdrop-blur text-yellow-500 text-sm font-semibold mb-2">
-                📍 #12-8-413/4, Metro Pillar 1118, Mettuguda
-            </div>
-            <h1 class="serif text-5xl md:text-7xl font-bold leading-tight">
-                Authentic <span class="text-gold italic">Dum Biryani</span>
-            </h1>
-            <p class="text-gray-400 text-lg max-w-2xl mx-auto">
-                World-class hygiene, premium spices, and the authentic taste of Hyderabad. Select your service size below.
-            </p>
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="flex-grow">
+        <!-- HERO SECTION -->
+        <section class="relative pt-32 pb-20 px-4 text-center overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-full z-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
             
-            <div class="flex flex-wrap justify-center gap-4 pt-6">
-                <div class="glass p-4 rounded-xl flex items-center gap-3">
-                    <div class="bg-green-500/20 p-2 rounded-full text-green-500"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
-                    <div class="text-left"><p class="text-xs text-gray-400">Free Delivery</p><p class="font-bold text-sm">Below 4km</p></div>
+            <div class="relative z-10 max-w-4xl mx-auto space-y-5 animate-slide">
+                <div class="inline-block border border-yellow-500/30 rounded-full px-4 py-1 bg-white/5 backdrop-blur text-yellow-400 text-xs font-semibold tracking-wide">
+                    📍 #12-8-413/4, Metro Pillar 1118, Mettuguda
                 </div>
-                <div class="glass p-4 rounded-xl flex items-center gap-3">
-                    <div class="bg-yellow-500/20 p-2 rounded-full text-yellow-500"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H9v-2h6v2zm0-5H9V9h6v4z"/></svg></div>
-                    <div class="text-left"><p class="text-xs text-gray-400">Call to Order</p><p class="font-bold text-sm">79894 09175</p></div>
+                <h1 class="serif text-5xl md:text-7xl font-bold leading-tight">
+                    Authentic <span class="text-gold italic">Dum Biryani</span>
+                </h1>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto font-light">
+                    Experience the royal flavors of Hyderabad. From personal packs to party buckets, we serve happiness.
+                </p>
+                
+                <div class="flex flex-wrap justify-center gap-4 pt-4">
+                    <button onclick="toggleEventModal()" class="md:hidden w-full bg-white/10 border border-white/20 text-white font-bold py-3 rounded-xl">
+                        Book Events & Catering
+                    </button>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="menu" class="px-4 pb-32 max-w-7xl mx-auto">
-        
-        <div class="sticky top-20 z-40 bg-[#2A0A0A]/95 backdrop-blur py-4 mb-8 -mx-4 px-4 border-b border-white/10">
-            <div class="flex overflow-x-auto gap-3 no-scrollbar pb-2" id="category-container">
+        <!-- MENU SECTION -->
+        <section id="menu" class="px-4 pb-20 max-w-7xl mx-auto relative z-10">
+            
+            <!-- Segmentation Tabs -->
+            <div class="sticky top-20 z-40 bg-[#1a0505]/95 backdrop-blur py-4 mb-8 -mx-4 px-4 border-b border-white/5">
+                <div class="flex overflow-x-auto gap-3 no-scrollbar pb-2" id="category-container">
+                    <!-- Categories injected via JS -->
                 </div>
-        </div>
-
-        <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             </div>
-    </section>
 
+            <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Items injected via JS -->
+            </div>
+        </section>
+    </div>
+
+    <!-- CART SIDEBAR -->
     <div id="cart-overlay" class="fixed inset-0 bg-black/80 z-[60] hidden backdrop-blur-sm" onclick="toggleCart()"></div>
-    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full bg-[#1a0505] z-[70] cart-sidebar flex flex-col border-l border-yellow-500/20 shadow-2xl">
-        <div class="p-6 border-b border-white/10 flex justify-between items-center bg-[#2A0A0A]">
+    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full bg-[#150404] z-[70] cart-sidebar flex flex-col border-l border-yellow-500/20 shadow-2xl">
+        <div class="p-6 border-b border-white/10 flex justify-between items-center bg-[#1a0505]">
             <h2 class="serif text-2xl text-yellow-500">Your Bucket</h2>
-            <button onclick="toggleCart()" class="p-2 hover:bg-white/10 rounded-full">✕</button>
+            <button onclick="toggleCart()" class="p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white">✕</button>
         </div>
         
         <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4">
-            </div>
+            <!-- Cart items here -->
+        </div>
 
-        <div class="p-6 bg-[#2A0A0A] border-t border-white/10 space-y-4">
+        <div class="p-6 bg-[#1a0505] border-t border-white/10 space-y-4">
             <div class="space-y-2 text-sm text-gray-400">
                 <div class="flex justify-between"><span>Subtotal</span><span id="subtotal" class="text-white">₹0</span></div>
                 <div class="flex justify-between"><span>Delivery</span><span class="text-green-500">Free (< 4km)</span></div>
@@ -146,81 +207,137 @@
                 <span id="cart-total" class="text-yellow-500">₹0</span>
             </div>
             <button onclick="checkout()" class="w-full gold-gradient text-black py-4 rounded-xl font-bold shadow-lg hover:brightness-110 transition flex justify-center items-center gap-2">
-                Checkout via UPI <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                Checkout (99082 84444) <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             </button>
         </div>
     </div>
 
+    <!-- FOOTER -->
+    <footer class="bg-black py-8 border-t border-white/10 text-center relative z-10">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="text-yellow-500 font-serif text-lg mb-2">Hot Bucket Biryani</p>
+            <p class="text-gray-500 text-sm mb-6">Authentic Hyderabadi Flavors</p>
+            
+            <div class="border-t border-white/10 pt-6">
+                <p class="text-gray-500 text-xs">
+                    Developed by 
+                    <a href="https://www.vinisolutions.com" target="_blank" class="text-white hover:text-yellow-500 transition-colors font-bold">
+                        ViNi Business Solutions
+                    </a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LOGIC -->
     <script>
-        // --- 1. DATA DIGITIZATION FROM MENU IMAGES ---
+        // --- CONFIGURATION ---
+        const UPI_ID = "9908284444@upi"; 
+        const UPI_DISPLAY = "+91 99082 84444";
+
+        // --- IMAGE MAPPING ---
+        const imgMap = {
+            chicken: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600",
+            mutton: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600",
+            veg: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600",
+            fish: "https://images.unsplash.com/photo-1542385108-1f6e074d080b?w=600",
+            prawns: "https://images.unsplash.com/photo-1559847844-5315695dadae?w=600",
+            starter: "https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=600",
+            bulk: "https://images.unsplash.com/photo-1542367028-520d19964b7c?w=600",
+            default: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=600"
+        };
+
+        function getImage(name, catId) {
+            const n = name.toLowerCase();
+            if (n.includes('chicken') && catId === 's6') return imgMap.starter;
+            if (n.includes('pepper') || n.includes('lollypop') || n.includes('fry')) return imgMap.starter;
+            if (n.includes('mutton') && n.includes('hundi')) return imgMap.bulk;
+            if (n.includes('10 persons')) return imgMap.bulk;
+            
+            if (n.includes('chicken')) return imgMap.chicken;
+            if (n.includes('mutton')) return imgMap.mutton;
+            if (n.includes('prawns')) return imgMap.prawns;
+            if (n.includes('fish')) return imgMap.fish;
+            if (n.includes('veg') || n.includes('paneer')) return imgMap.veg;
+            
+            return imgMap.default;
+        }
+
         const categories = [
             { id: "s1", name: "Service 1 (Personal)", label: "Personal Pack" },
             { id: "s2", name: "Service 2 (Couple)", label: "Couple Pack" },
             { id: "s3", name: "Service 3 (Family)", label: "Family Pack" },
-            { id: "s4", name: "Service 4 (Jumbo)", label: "Jumbo Pack" }, // Inferred from price progression (680 range)
-            { id: "s5", name: "Service 5 (Party)", label: "Party Pack" }, // 850 range
+            { id: "s4", name: "Service 4 (Jumbo)", label: "Jumbo Pack" },
+            { id: "s5", name: "Service 5 (Party)", label: "Party Pack" },
             { id: "s6", name: "Service 6 (Starters)", label: "Starters & Bulk" }
         ];
 
-        const menuItems = [
+        // Raw items - images will be auto-assigned on render
+        const rawItems = [
             // SERVICE 1
-            { id: 101, name: "Chicken Dum Biryani", price: 180, cat: "s1", img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=600" },
-            { id: 102, name: "Boneless Chicken Biryani", price: 220, cat: "s1", img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600" },
-            { id: 103, name: "Chicken Fry Biryani", price: 190, cat: "s1", img: "https://images.unsplash.com/photo-1631515243349-e06036043944?w=600" },
-            { id: 104, name: "Hot Bucket Spl. Chicken", price: 200, cat: "s1", img: "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600" },
-            { id: 105, name: "Mutton Biryani", price: 240, cat: "s1", img: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600" },
-            { id: 106, name: "Prawns Biryani", price: 240, cat: "s1", img: "https://images.unsplash.com/photo-1559847844-5315695dadae?w=600" },
-            { id: 107, name: "Fish Biryani", price: 190, cat: "s1", img: "https://images.unsplash.com/photo-1542385108-1f6e074d080b?w=600" },
-            { id: 108, name: "Egg Biryani", price: 170, cat: "s1", img: "https://images.unsplash.com/photo-1644917646736-4c316715201d?w=600" },
-            { id: 109, name: "Veg Biryani", price: 160, cat: "s1", img: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600" },
+            { id: 101, name: "Chicken Dum Biryani", price: 180, cat: "s1" },
+            { id: 102, name: "Boneless Chicken Biryani", price: 220, cat: "s1" },
+            { id: 103, name: "Chicken Fry Biryani", price: 190, cat: "s1" },
+            { id: 104, name: "Hot Bucket Spl. Chicken", price: 200, cat: "s1" },
+            { id: 105, name: "Mutton Biryani", price: 240, cat: "s1" },
+            { id: 106, name: "Prawns Biryani", price: 240, cat: "s1" },
+            { id: 107, name: "Fish Biryani", price: 190, cat: "s1" },
+            { id: 108, name: "Egg Biryani", price: 170, cat: "s1" },
+            { id: 109, name: "Veg Biryani", price: 160, cat: "s1" },
 
             // SERVICE 2
-            { id: 201, name: "Chicken Dum Biryani", price: 340, cat: "s2", img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=600" },
-            { id: 202, name: "Boneless Chicken Biryani", price: 430, cat: "s2", img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600" },
-            { id: 203, name: "Chicken Fry Biryani", price: 370, cat: "s2", img: "https://images.unsplash.com/photo-1631515243349-e06036043944?w=600" },
-            { id: 204, name: "Hot Bucket Spl. Chicken", price: 390, cat: "s2", img: "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600" },
-            { id: 205, name: "Mutton Biryani", price: 460, cat: "s2", img: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600" },
-            { id: 208, name: "Egg Biryani", price: 320, cat: "s2", img: "https://images.unsplash.com/photo-1644917646736-4c316715201d?w=600" },
-            { id: 209, name: "Veg Biryani", price: 300, cat: "s2", img: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=600" },
+            { id: 201, name: "Chicken Dum Biryani", price: 340, cat: "s2" },
+            { id: 202, name: "Boneless Chicken Biryani", price: 430, cat: "s2" },
+            { id: 203, name: "Chicken Fry Biryani", price: 370, cat: "s2" },
+            { id: 204, name: "Hot Bucket Spl. Chicken", price: 390, cat: "s2" },
+            { id: 205, name: "Mutton Biryani", price: 460, cat: "s2" },
+            { id: 208, name: "Egg Biryani", price: 320, cat: "s2" },
+            { id: 209, name: "Veg Biryani", price: 300, cat: "s2" },
 
             // SERVICE 3
-            { id: 301, name: "Chicken Dum Biryani", price: 510, cat: "s3", img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=600" },
-            { id: 302, name: "Boneless Chicken Biryani", price: 630, cat: "s3", img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600" },
-            { id: 305, name: "Mutton Biryani", price: 690, cat: "s3", img: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600" },
-            { id: 308, name: "Egg Biryani", price: 480, cat: "s3", img: "https://images.unsplash.com/photo-1644917646736-4c316715201d?w=600" },
+            { id: 301, name: "Chicken Dum Biryani", price: 510, cat: "s3" },
+            { id: 302, name: "Boneless Chicken Biryani", price: 630, cat: "s3" },
+            { id: 305, name: "Mutton Biryani", price: 690, cat: "s3" },
+            { id: 308, name: "Egg Biryani", price: 480, cat: "s3" },
 
-            // SERVICE 4 (JUMBO - inferred from 680 price point)
-            { id: 401, name: "Chicken Dum Biryani", price: 680, cat: "s4", img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=600" },
-            { id: 402, name: "Boneless Chicken Biryani", price: 840, cat: "s4", img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600" },
-            { id: 405, name: "Mutton Biryani", price: 920, cat: "s4", img: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600" },
+            // SERVICE 4
+            { id: 401, name: "Chicken Dum Biryani", price: 680, cat: "s4" },
+            { id: 402, name: "Boneless Chicken Biryani", price: 840, cat: "s4" },
+            { id: 405, name: "Mutton Biryani", price: 920, cat: "s4" },
 
-            // SERVICE 5 (PARTY - inferred from 850 price point)
-            { id: 501, name: "Chicken Dum Biryani", price: 850, cat: "s5", img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=600" },
-            { id: 502, name: "Boneless Chicken Biryani", price: 1050, cat: "s5", img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600" },
-            { id: 505, name: "Mutton Biryani", price: 1150, cat: "s5", img: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600" },
+            // SERVICE 5
+            { id: 501, name: "Chicken Dum Biryani", price: 850, cat: "s5" },
+            { id: 502, name: "Boneless Chicken Biryani", price: 1050, cat: "s5" },
+            { id: 505, name: "Mutton Biryani", price: 1150, cat: "s5" },
 
-            // SERVICE 6 (STARTERS & BULK)
-            { id: 601, name: "Pepper Chicken", price: 220, cat: "s6", img: "https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=600" },
-            { id: 602, name: "Chicken Fry", price: 220, cat: "s6", img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600" },
-            { id: 603, name: "Chicken Lollypop", price: 270, cat: "s6", img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600" },
-            { id: 607, name: "10 Persons Chicken", price: 1700, cat: "s6", img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600" },
-            { id: 608, name: "10 Persons Mutton", price: 2300, cat: "s6", img: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600" },
-            { id: 609, name: "Mutton Hundi", price: 13500, cat: "s6", img: "https://images.unsplash.com/photo-1542367028-520d19964b7c?w=600" },
+            // SERVICE 6
+            { id: 601, name: "Pepper Chicken", price: 220, cat: "s6" },
+            { id: 602, name: "Chicken Fry", price: 220, cat: "s6" },
+            { id: 603, name: "Chicken Lollypop", price: 270, cat: "s6" },
+            { id: 607, name: "10 Persons Chicken", price: 1700, cat: "s6" },
+            { id: 608, name: "10 Persons Mutton", price: 2300, cat: "s6" },
+            { id: 609, name: "Mutton Hundi", price: 13500, cat: "s6" },
         ];
+
+        // Hydrate items with images
+        const menuItems = rawItems.map(item => ({
+            ...item,
+            img: getImage(item.name, item.cat)
+        }));
 
         let cart = [];
         let activeCategory = "s1";
 
-        // --- 2. INITIALIZATION ---
+        // --- INITIALIZATION ---
         window.onload = () => {
             renderCategories();
             renderMenu();
             setTimeout(() => {
                 document.getElementById('offer-modal').classList.remove('hidden');
-            }, 1500); // Show popup after 1.5s
+            }, 1000);
         };
 
-        // --- 3. RENDER FUNCTIONS ---
+        // --- RENDER FUNCTIONS ---
         function renderCategories() {
             const container = document.getElementById('category-container');
             container.innerHTML = categories.map(c => `
@@ -252,7 +369,7 @@
             `).join('');
         }
 
-        // --- 4. ACTIONS ---
+        // --- ACTIONS ---
         function setCategory(id) {
             activeCategory = id;
             renderCategories();
@@ -269,16 +386,6 @@
                 cart.push({ ...item, qty: 1 });
             }
             updateCartUI();
-            
-            // Subtle feedback
-            const btn = event.target;
-            const originalText = btn.innerText;
-            btn.innerText = "✓";
-            btn.classList.add("bg-green-500", "text-white");
-            setTimeout(() => {
-                btn.innerText = originalText;
-                btn.classList.remove("bg-green-500", "text-white");
-            }, 1000);
         }
 
         function updateCartUI() {
@@ -317,7 +424,7 @@
             totalEl.innerText = `₹${total}`;
             
             if(count === 0) {
-                container.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-500 opacity-50"><svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg><p class="mt-2">Bucket is empty</p></div>`;
+                container.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-500 opacity-50"><p>Bucket is empty</p></div>`;
             }
         }
 
@@ -330,35 +437,41 @@
             updateCartUI();
         }
 
-        // --- 5. MODAL LOGIC ---
-        function closeOffer() {
-            document.getElementById('offer-modal').classList.add('hidden');
-        }
-
-        function addOfferItem() {
-            addToCart(101); // Adds Chicken Dum Biryani Service 1 (180/-)
-            closeOffer();
-            toggleCart(); // Opens cart
-        }
-
+        // --- MODAL & EVENT LOGIC ---
+        function closeOffer() { document.getElementById('offer-modal').classList.add('hidden'); }
+        function addOfferItem() { addToCart(101); closeOffer(); toggleCart(); }
+        
         function toggleCart() {
             const sidebar = document.getElementById('cart-sidebar');
             const overlay = document.getElementById('cart-overlay');
             sidebar.classList.toggle('open');
+            sidebar.classList.contains('open') ? overlay.classList.remove('hidden') : overlay.classList.add('hidden');
+        }
+
+        function toggleEventModal() {
+            const modal = document.getElementById('event-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function submitEventInquiry() {
+            const type = document.getElementById('event-type').value;
+            const count = document.getElementById('guest-count').value;
+            const date = document.getElementById('event-date').value;
             
-            if (sidebar.classList.contains('open')) {
-                overlay.classList.remove('hidden');
-            } else {
-                overlay.classList.add('hidden');
-            }
+            if(!count || !date) return alert("Please fill all details");
+            
+            const msg = `Hi Hot Bucket Biryani, I want to book an event.\n\nType: ${type}\nGuests: ${count}\nDate: ${date}\n\nPlease contact me.`;
+            window.open(`https://wa.me/919908284444?text=${encodeURIComponent(msg)}`);
         }
 
         function checkout() {
             if (cart.length === 0) return alert("Please add items to your bucket first.");
             const total = document.getElementById('cart-total').innerText.replace('₹', '');
-            const upiUrl = `upi://pay?pa=7989409175@upi&pn=HotBucketBiryani&am=${total}&cu=INR`;
+            const upiUrl = `upi://pay?pa=${UPI_ID}&pn=HotBucketBiryani&am=${total}&cu=INR`;
             window.location.href = upiUrl;
         }
     </script>
 </body>
 </html>
+
+
