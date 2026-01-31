@@ -207,7 +207,7 @@
                 <span id="cart-total" class="text-yellow-500">₹0</span>
             </div>
             <button onclick="checkout()" class="w-full gold-gradient text-black py-4 rounded-xl font-bold shadow-lg hover:brightness-110 transition flex justify-center items-center gap-2">
-                Checkout (99082 84444) <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                Checkout with UPI <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             </button>
         </div>
     </div>
@@ -233,7 +233,6 @@
     <script>
         // --- CONFIGURATION ---
         const UPI_ID = "9908284444@upi"; 
-        const UPI_DISPLAY = "+91 99082 84444";
 
         // --- IMAGE MAPPING ---
         const imgMap = {
@@ -467,8 +466,16 @@
         function checkout() {
             if (cart.length === 0) return alert("Please add items to your bucket first.");
             const total = document.getElementById('cart-total').innerText.replace('₹', '');
-            const upiUrl = `upi://pay?pa=${UPI_ID}&pn=HotBucketBiryani&am=${total}&cu=INR`;
-            window.location.href = upiUrl;
+            
+            // Check if user is on mobile
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                const upiUrl = `upi://pay?pa=${UPI_ID}&pn=HotBucketBiryani&am=${total}&cu=INR`;
+                window.location.href = upiUrl;
+            } else {
+                alert("This feature opens your phone's UPI app. Since you are on a desktop, please use your phone to scan the QR code or pay to " + UPI_ID.split('@')[0]);
+            }
         }
     </script>
 </body>
