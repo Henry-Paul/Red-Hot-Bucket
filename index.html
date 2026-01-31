@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Bucket Biryani | Ultra Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #2A0A0A; color: white; scroll-behavior: smooth; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .gold-gradient { background: linear-gradient(135deg, #FDE68A 0%, #EAB308 50%, #CA8A04 100%); }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .cart-sidebar { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
+        .cart-sidebar.open { transform: translateX(0); }
+    </style>
+</head>
+<body>
+
+    <nav class="fixed w-full z-50 glass py-4 px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 gold-gradient rounded-full flex items-center justify-center text-royal-900 shadow-lg font-bold">HB</div>
+            <h1 class="text-xl font-bold tracking-tight">HOT BUCKET <span class="text-yellow-500">BIRYANI</span></h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <button onclick="togglePlanner()" class="hidden md:block border border-yellow-500 text-yellow-500 px-4 py-1 rounded-full text-sm font-semibold hover:bg-yellow-500 hover:text-black transition">PLAN EVENT</button>
+            <button onclick="toggleCart()" class="relative p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <span id="cart-count" class="absolute -top-1 -right-1 bg-yellow-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <section class="relative h-screen flex items-center justify-center text-center px-4 overflow-hidden">
+        <div class="absolute inset-0 bg-black/60 z-10"></div>
+        <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=1920" class="absolute inset-0 w-full h-full object-cover">
+        
+        <div class="relative z-20 max-w-4xl">
+            <h2 class="text-yellow-500 font-semibold tracking-widest uppercase mb-4">Now at Mettuguda</h2>
+            <h1 class="serif text-5xl md:text-7xl mb-6 leading-tight">Authentic <span class="text-yellow-500 italic">Hyderabadi</span> Royal Feast</h1>
+            <p class="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">Experience the finest Dum Biryani with world-class infrastructure and spicy traditional flavors.</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#menu" class="gold-gradient text-black px-8 py-4 rounded-full font-bold hover:scale-105 transition">Order Online</a>
+                <button onclick="togglePlanner()" class="bg-white/10 border border-white/20 px-8 py-4 rounded-full font-bold hover:bg-white/20 transition">Event Planner</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="py-20 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="serif text-4xl mb-2">Our Signature Menu</h2>
+            <div class="w-20 h-1 gold-gradient mx-auto"></div>
+        </div>
+
+        <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+    </section>
+
+    <div id="planner-modal" class="fixed inset-0 z-[100] bg-black/90 hidden flex items-center justify-center p-4">
+        <div class="bg-stone-900 border border-yellow-500/30 w-full max-w-xl rounded-2xl p-8 relative">
+            <button onclick="togglePlanner()" class="absolute top-4 right-4 text-gray-400">✕</button>
+            <h2 class="serif text-3xl text-yellow-500 mb-2">Event Planner Tool</h2>
+            <p class="text-gray-400 mb-6">Calculate costs for your big celebration.</p>
+            
+            <div class="space-y-4">
+                <label class="block text-sm">Number of Guests</label>
+                <input type="range" id="guest-range" min="20" max="500" value="50" oninput="updatePlanner()" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-yellow-500">
+                <div class="flex justify-between font-bold text-yellow-500">
+                    <span id="guest-count">50 Guests</span>
+                    <span id="estimated-price">₹9,000</span>
+                </div>
+                <button onclick="whatsappInquiry()" class="w-full gold-gradient text-black py-4 rounded-xl font-bold mt-4">Inquire on WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-sidebar" class="fixed top-0 right-0 w-full md:w-96 h-full bg-stone-950 z-[60] cart-sidebar p-6 flex flex-col border-l border-white/10 shadow-2xl">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="serif text-2xl">Your Bucket</h2>
+            <button onclick="toggleCart()">✕</button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto space-y-4">
+            </div>
+        <div class="border-t border-white/10 pt-4 mt-4">
+            <div class="flex justify-between text-xl font-bold mb-6">
+                <span>Total</span>
+                <span id="cart-total" class="text-yellow-500">₹0</span>
+            </div>
+            <button onclick="checkout()" class="w-full gold-gradient text-black py-4 rounded-xl font-bold">Pay with UPI</button>
+        </div>
+    </div>
+
+    <script>
+        const menuItems = [
+            { id: 1, name: "Chicken Dum Biryani (Personal)", price: 180, img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400" },
+            { id: 2, name: "Chicken Dum Biryani (Family)", price: 510, img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=400" },
+            { id: 3, name: "Mutton Biryani (Personal)", price: 240, img: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400" },
+            { id: 4, name: "Pepper Chicken Starter", price: 220, img: "https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=400" },
+            { id: 5, name: "Chicken Lollypop", price: 270, img: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400" },
+            { id: 6, name: "10 Persons Chicken Bulk", price: 1700, img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400" }
+        ];
+
+        let cart = [];
+
+        // Render Menu
+        const grid = document.getElementById('menu-grid');
+        menuItems.forEach(item => {
+            grid.innerHTML += `
+                <div class="glass rounded-2xl overflow-hidden hover:scale-[1.02] transition">
+                    <img src="${item.img}" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">${item.name}</h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-yellow-500 font-bold">₹${item.price}</span>
+                            <button onclick="addToCart(${item.id})" class="bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold text-sm">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        function addToCart(id) {
+            const item = menuItems.find(i => i.id === id);
+            cart.push(item);
+            updateCartUI();
+            toggleCart(true);
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            const countEl = document.getElementById('cart-count');
+            
+            container.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                total += item.price;
+                container.innerHTML += `
+                    <div class="flex justify-between items-center bg-white/5 p-3 rounded-lg">
+                        <div>
+                            <p class="font-bold text-sm">${item.name}</p>
+                            <p class="text-yellow-500 text-xs font-bold">₹${item.price}</p>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-red-500 text-xs">Remove</button>
+                    </div>
+                `;
+            });
+            
+            totalEl.innerText = `₹${total}`;
+            countEl.innerText = cart.length;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCart(forceOpen = false) {
+            const sidebar = document.getElementById('cart-sidebar');
+            if(forceOpen) sidebar.classList.add('open');
+            else sidebar.classList.toggle('open');
+        }
+
+        function togglePlanner() {
+            document.getElementById('planner-modal').classList.toggle('hidden');
+        }
+
+        function updatePlanner() {
+            const guests = document.getElementById('guest-range').value;
+            document.getElementById('guest-count').innerText = `${guests} Guests`;
+            document.getElementById('estimated-price').innerText = `₹${guests * 180}`;
+        }
+
+        function whatsappInquiry() {
+            const guests = document.getElementById('guest-range').value;
+            const msg = encodeURIComponent(`Hi Hot Bucket Biryani! I'm planning an event for ${guests} people. Please share menu details.`);
+            window.open(`https://wa.me/917989409175?text=${msg}`);
+        }
+
+        function checkout() {
+            const total = cart.reduce((a, b) => a + b.price, 0);
+            if(total === 0) return alert("Your cart is empty!");
+            const upiUrl = `upi://pay?pa=hotbucket@upi&pn=HotBucket&am=${total}&cu=INR`;
+            window.location.href = upiUrl;
+        }
+    </script>
+</body>
+</html>
